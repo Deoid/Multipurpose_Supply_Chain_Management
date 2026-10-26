@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Backend API with AWS SDK v3
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: scm-server
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - AWS_MOCK=true
+      - AWS_REGION=us-east-1
+    restart: unless-stopped
+    networks:
+      - scm-network
+
+  # Frontend Web Dashboard (React + Vite + Tailwind Nginx)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: scm-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+    networks:
+      - scm-network
+
+networks:
+  scm-network:
+    driver: bridge
