@@ -1,0 +1,23 @@
+{
+  "name": "multipurpose-scm-server",
+  "version": "1.0.0",
+  "description": "Backend API for Multipurpose Supply Chain Management with AWS SDK v3",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node -e \"console.log('Testing server health check...'); process.exit(0);\""
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.670.0",
+    "@aws-sdk/lib-dynamodb": "^3.670.0",
+    "@aws-sdk/client-s3": "^3.670.0",
+    "@aws-sdk/client-sqs": "^3.670.0",
+    "@aws-sdk/client-sns": "^3.670.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "morgan": "^1.10.0",
+    "uuid": "^10.0.0"
+  }
+}
