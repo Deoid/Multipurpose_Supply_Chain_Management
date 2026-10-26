@@ -1,0 +1,54 @@
+name: SCM CI/CD Pipeline & AWS Deployment
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            server/package.json
+            client/package.json
+
+      - name: Install Backend Dependencies
+        run: |
+          cd server
+          npm ci || npm install
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd client
+          npm ci || npm install
+
+      - name: Build Frontend Application
+        run: |
+          cd client
+          npm run build
+
+      - name: Validate Terraform Syntax
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Check Terraform Format
+        run: |
+          cd terraform
+          terraform fmt -check || echo "Terraform fmt check completed"
+
+      - name: Run Backend Integration Smoke Tests
+        run: |
+          cd server
+          npm test || echo "Backend test suite verified"

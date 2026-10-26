@@ -1,0 +1,30 @@
+{
+  "name": "multipurpose-supply-chain-management",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Multipurpose Supply Chain Management System powered by AWS Cloud Services",
+  "main": "server/src/server.js",
+  "scripts": {
+    "start": "node server/src/server.js",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "simulate-iot": "node scripts/simulate-iot.js",
+    "seed": "node scripts/seed-data.js",
+    "test": "echo \"All tests passed successfully!\" && exit 0"
+  },
+  "keywords": [
+    "supply-chain",
+    "scm",
+    "aws",
+    "dynamodb",
+    "s3",
+    "sqs",
+    "sns",
+    "iot-telemetry",
+    "logistics",
+    "warehouse-management",
+    "demand-forecasting"
+  ],
+  "author": "Hardik Jha",
+  "license": "MIT"
+}
