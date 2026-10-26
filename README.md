@@ -3,9 +3,14 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)
 [![AWS Architecture](https://img.shields.io/badge/AWS-DynamoDB%20%7C%20S3%20%7C%20SQS%20%7C%20SNS%20%7C%20IoT%20Core-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](#aws-cloud-architecture)
+[![Documentation](https://img.shields.io/badge/Developer%20Manual-PDF%20%26%20PPTX-blue?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](#developer-resources)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 🔗 **Live Interactive Control Tower Demo**: **[https://deoid.github.io/Multipurpose_Supply_Chain_Management/](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)**
+
+📁 **Developer Documentation & Downloads**:
+- 📄 **[Download Complete Developer Engineering Manual (PDF)](Multipurpose_SCM_Complete_Developer_Manual.pdf)**
+- 📊 **[Download 6-Slide Executive Architecture Presentation (PPTX)](Multipurpose_SCM_AWS_Architecture.pptx)**
 
 ---
 
