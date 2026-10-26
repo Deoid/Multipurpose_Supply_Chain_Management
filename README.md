@@ -1,11 +1,11 @@
 # 🌐 Multipurpose Supply Chain Management (SCM) Cloud Platform
 > **Enterprise-grade, Event-Driven Supply Chain Management System architected on AWS Cloud Services**
 
-[![AWS Architecture](https://img.shields.io/badge/AWS-DynamoDB%20%7C%20S3%20%7C%20SQS%20%7C%20SNS%20%7C%20IoT%20Core-FF9900?logo=amazon-aws&logoColor=white)](#aws-cloud-architecture)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-v20-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://reactjs.org)
-[![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?logo=terraform&logoColor=white)](https://www.terraform.io)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)
+[![AWS Architecture](https://img.shields.io/badge/AWS-DynamoDB%20%7C%20S3%20%7C%20SQS%20%7C%20SNS%20%7C%20IoT%20Core-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](#aws-cloud-architecture)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+
+🔗 **Live Interactive Control Tower Demo**: **[https://deoid.github.io/Multipurpose_Supply_Chain_Management/](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)**
 
 ---
 
