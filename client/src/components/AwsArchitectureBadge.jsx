@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cloud, Database, Cpu, Radio, Archive, Bell } from 'lucide-react';
+import { Cloud, Database, Cpu, Radio, Archive, Bell, Link2 } from 'lucide-react';
 
 const SERVICE_CONFIG = {
   dynamodb: {
@@ -31,6 +31,12 @@ const SERVICE_CONFIG = {
     icon: Radio,
     color: 'border-cyan-500/40 bg-cyan-950/40 text-cyan-300',
     desc: 'Real-time telemetry ingestion and rules engine',
+  },
+  blockchain: {
+    name: 'Amazon Managed Blockchain',
+    icon: Link2,
+    color: 'border-purple-500/40 bg-purple-950/40 text-purple-300',
+    desc: 'Cryptographic immutable ledger & smart contract custody verification',
   },
 };
 

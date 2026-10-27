@@ -1,22 +1,25 @@
 # 🌐 Multipurpose Supply Chain Management (SCM) Cloud Platform
-> **Enterprise-grade, Event-Driven Supply Chain Management System architected on AWS Cloud Services**
+> **Enterprise-grade, Event-Driven Supply Chain Management System architected on AWS Cloud Services & Cryptographic Blockchain Ledger**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)
 [![AWS Architecture](https://img.shields.io/badge/AWS-DynamoDB%20%7C%20S3%20%7C%20SQS%20%7C%20SNS%20%7C%20IoT%20Core-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](#aws-cloud-architecture)
-[![Documentation](https://img.shields.io/badge/Developer%20Manual-PDF%20%26%20PPTX-blue?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](#developer-resources)
+[![Blockchain](https://img.shields.io/badge/Blockchain-SHA--256%20Merkle%20%7C%20Smart%20Contracts-purple?style=for-the-badge&logo=blockchaindotcom&logoColor=white)](#-blockchain--smart-contracts)
+[![Documentation](https://img.shields.io/badge/Developer%20Manual-HTML%20%26%20PDF-blue?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](#developer-resources)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 🔗 **Live Interactive Control Tower Demo**: **[https://deoid.github.io/Multipurpose_Supply_Chain_Management/](https://deoid.github.io/Multipurpose_Supply_Chain_Management/)**
 
 📁 **Developer Documentation & Downloads**:
+- 🌐 **[Open Interactive Developer Manual (HTML)](Developer_Manual.html)** *(Double-click to view instantly in any web browser)*
 - 📄 **[Download Complete Developer Engineering Manual (PDF)](Multipurpose_SCM_Complete_Developer_Manual.pdf)**
-- 📊 **[Download 6-Slide Executive Architecture Presentation (PPTX)](Multipurpose_SCM_AWS_Architecture.pptx)**
+- 📊 **[Download 7-Slide Architecture & Blockchain Presentation (PPTX)](Multipurpose_SCM_AWS_Architecture.pptx)**
 
 ---
 
 ## 📋 Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
+- [Blockchain & Smart Contracts](#-blockchain--smart-contracts)
 - [AWS Cloud Architecture](#aws-cloud-architecture)
 - [Project Structure](#project-structure)
 - [Quick Start Guide](#quick-start-guide)
@@ -30,7 +33,7 @@
 ## 🚀 Overview
 The **Multipurpose Supply Chain Management System** is a modular, multi-tenant cloud application engineered to handle the full lifecycle of modern supply chains across diverse industries (Pharmaceutical Cold-Chain, High-Tech Electronics, FMCG Perishables, and Heavy Industrial Machinery).
 
-It integrates directly with AWS managed services for high availability, sub-millisecond document lookups, decoupled event queues, real-time alert broadcasts, and IoT sensor streams.
+It integrates directly with AWS managed services for high availability, sub-millisecond document lookups, decoupled event queues, real-time alert broadcasts, IoT sensor streams, and an **Immutable Cryptographic Blockchain Ledger** with automated smart contracts.
 
 ---
 
@@ -48,11 +51,29 @@ It integrates directly with AWS managed services for high availability, sub-mill
    - In-transit GPS tracking with simulated IoT environmental telemetries (**Temperature**, **Humidity**, **Shock/Vibration**, and **Battery**).
    - Cold-chain compliance breach alerts dispatched automatically via **Amazon SNS**.
 
-4. **🤝 Supplier & Procurement Management**
+4. **⛓️ Immutable Blockchain Ledger & Smart Contracts**
+   - SHA-256 Merkle chain tracking custody handovers between manufacturers, carriers, and receiving bays.
+   - Automated `SC-COLD-CHAIN-SLA` smart contract that automatically verifies temperature compliance and locks/releases escrow funds ($25,000 USD).
+
+5. **🤝 Supplier & Procurement Management**
    - Vendor performance ratings, on-time delivery metrics, purchase order (PO) approvals, and document attachments stored in **Amazon S3**.
 
-5. **📊 SCM Control Tower & Demand Forecasting**
+6. **📊 SCM Control Tower & Demand Forecasting**
    - Central executive dashboard featuring stockout risk indicators, inventory turnover ratios, throughput trends, and AI-driven demand forecasting.
+
+---
+
+## ⛓️ Blockchain & Smart Contracts
+
+```
+  [Block #0: Genesis] ──SHA-256──> [Block #1: Purchase Order] ──SHA-256──> [Block #2: Cold-Chain SLA]
+  ├─ Nonce: 104                    ├─ Escrow Initiated: $25k              ├─ Temp Verified: 4.1°C
+  └─ Sig: 0x889...                 └─ Sig: 0x491...                       └─ Sig: 0x12a...
+```
+
+- **Cryptographic Provenance**: Every physical custody transfer is digitally signed with HMAC-SHA-256 keys and mined into a block.
+- **Proof-of-Authority (PoA)**: Employs Amazon Managed Blockchain (AMB) / Hyperledger Fabric consensus for enterprise transaction speed.
+- **Automated Escrow Enforcement**: If temperature drifts outside [2°C - 8°C], the smart contract immediately marks the state as `BREACH_DETECTED_ESCROW_FROZEN` on the immutable ledger.
 
 ---
 
@@ -66,25 +87,19 @@ It integrates directly with AWS managed services for high availability, sub-mill
                                              v
                   +-------------------------------------------------------+
                   |           API Gateway / Express REST Backend          |
-                  +-------+-------------+-------------+------------+------+
-                          |             |             |            |
-         +----------------v--+    +-----v------+  +---v-----+  +---v-----+
-         | Amazon DynamoDB   |    | Amazon S3  |  | Amazon  |  | Amazon  |
-         | (Multi-Table /    |    | (Invoices, |  |   SQS   |  |   SNS   |
-         |  Single-Table)    |    |  Shipment  |  | (Order  |  | (Alert  |
-         | - Inventory       |    |  Docs,     |  | Ingest &|  | & Stock |
-         | - Orders          |    |  Telemetry |  | Worker  |  | Notifs) |
-         | - Shipments       |    |   Archive) |  | Queues) |  +---------+
-         | - Suppliers       |    +------------+  +---------+
-         | - IoT Telemetry   |
-         +-------------------+
+                  +----+-------------+-------------+------------+----+----+
+                       |             |             |            |    |
+      +----------------v--+    +-----v------+  +---v-----+  +---v----+  +---v----+
+      | Amazon DynamoDB   |    | Amazon S3  |  | Amazon  |  | Amazon |  | Amazon |
+      | (Multi-Table /    |    | (Invoices, |  |   SQS   |  |   SNS  |  | Managed|
+      |  Single-Table)    |    |  Shipment  |  | (Order  |  | (Alert |  | Block- |
+      | - Inventory       |    |  Docs,     |  | Ingest &|  | & Stock|  |  chain |
+      | - Orders          |    |  Telemetry |  | Worker  |  | Notifs)|  | Ledger |
+      | - Shipments       |    |   Archive) |  | Queues) |  +--------+  +--------+
+      | - Suppliers       |    +------------+  +---------+
+      | - IoT Telemetry   |
+      +-------------------+
 ```
-
-- **Amazon DynamoDB**: Low-latency NoSQL database for fast item lookups, orders, and telemetry timeseries records.
-- **Amazon S3**: Secure object storage for digital purchase orders, customs declarations, and logistics invoices.
-- **Amazon SQS**: Decouples order spikes from fulfillment workers, ensuring zero data loss during high throughput.
-- **Amazon SNS**: Instant multi-channel alert fanout (SMS / Email / Webhook) when temperature thresholds or stockout limits are breached.
-- **AWS IoT Core / Simulator**: Ingests high-frequency device metrics for real-time fleet asset tracking.
 
 ---
 
@@ -92,7 +107,9 @@ It integrates directly with AWS managed services for high availability, sub-mill
 
 ```
 Multipurpose_Supply_Chain_Management/
-├── .github/workflows/ci-cd.yml      # Automated GitHub Actions Pipeline
+├── .github/workflows/
+│   ├── ci-cd.yml                    # Automated GitHub Actions Pipeline
+│   └── deploy-gh-pages.yml          # GitHub Pages Live Deployment Workflow
 ├── terraform/                       # AWS Infrastructure as Code
 │   ├── main.tf                      # DynamoDB, S3, SQS, SNS definitions
 │   ├── variables.tf                 # Environment and AWS Region configurations
@@ -100,8 +117,14 @@ Multipurpose_Supply_Chain_Management/
 ├── server/                          # Backend API & AWS Services Layer
 │   ├── src/
 │   │   ├── config/aws.js            # AWS SDK v3 configurations (Live & Mock mode)
-│   │   ├── controllers/             # REST controllers for Inventory, Orders, etc.
-│   │   ├── services/                # AWS DynamoDB, S3, SQS, SNS integrations
+│   │   ├── controllers/             # REST controllers (Inventory, Orders, Blockchain)
+│   │   ├── services/
+│   │   │   ├── blockchainService.js # SHA-256 Merkle chain & Smart Contract Engine
+│   │   │   ├── dynamoDbService.js
+│   │   │   ├── s3StorageService.js
+│   │   │   ├── sqsQueueService.js
+│   │   │   ├── snsNotificationService.js
+│   │   │   └── iotSimulatorService.js
 │   │   ├── routes/api.js            # API routing specifications
 │   │   └── server.js                # Server entry point
 │   ├── package.json
@@ -109,15 +132,27 @@ Multipurpose_Supply_Chain_Management/
 ├── client/                          # React + Tailwind CSS Web Control Tower
 │   ├── src/
 │   │   ├── components/              # UI components, badges, metrics cards
-│   │   ├── pages/                   # Control Tower, Inventory, Orders, Shipments, etc.
-│   │   ├── services/api.js          # REST Client API connectors
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx        # SCM Control Tower & Real-time KPIs
+│   │   │   ├── Inventory.jsx        # Multi-facility Warehouse Inventory
+│   │   │   ├── Orders.jsx           # Order Lifecycle & SQS Queue Monitor
+│   │   │   ├── Shipments.jsx        # Live Shipment & IoT Cold-Chain Tracker
+│   │   │   ├── Blockchain.jsx       # Visual Block Explorer & Smart Contracts
+│   │   │   ├── Suppliers.jsx        # Procurement & Vendor Management
+│   │   │   └── Architecture.jsx     # AWS Cloud Architecture Explorer
+│   │   ├── services/api.js          # REST Client & in-browser simulator
 │   │   ├── App.jsx
 │   │   └── index.css
 │   ├── package.json
 │   └── vite.config.js
 ├── scripts/
+│   ├── generate-pptx.py             # 7-Slide Architecture PowerPoint generator
+│   ├── generate_developer_manual.py # Publication-quality PDF manual generator
 │   ├── seed-data.js                 # Realistic seed data for immediate demonstration
 │   └── simulate-iot.js              # Live IoT sensor telemetry publisher
+├── Developer_Manual.html            # One-click interactive browser developer manual
+├── Multipurpose_SCM_Complete_Developer_Manual.pdf # Complete PDF Developer Manual
+├── Multipurpose_SCM_AWS_Architecture.pptx         # Architecture Presentation
 └── docker-compose.yml               # Multi-container local orchestration
 ```
 
@@ -131,7 +166,6 @@ Multipurpose_Supply_Chain_Management/
 - *(Optional)* AWS CLI & AWS Credentials (The system includes an intelligent Mock AWS fallback so it can run immediately without cloud costs!)
 
 ### 1. Installation
-Clone the repository and install dependencies:
 ```bash
 # Install backend dependencies
 cd server
@@ -143,7 +177,6 @@ npm install
 ```
 
 ### 2. Running Locally
-From the root directory:
 ```bash
 # Start backend server (Port 5000)
 cd server
@@ -155,26 +188,6 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` in your browser.
-
----
-
-## 🔄 GitHub Setup & Synchronization
-
-To connect this local repository with your GitHub account:
-
-1. **Create a new repository on GitHub**:
-   - Go to [github.com/new](https://github.com/new)
-   - Set Repository Name: `Multipurpose_Supply_Chain_Management`
-   - Choose **Public** or **Private**
-   - Do **NOT** initialize with README or .gitignore (we have already created them!)
-   - Click **Create repository**
-
-2. **Add Remote and Push**:
-   ```bash
-   git branch -M main
-   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/Multipurpose_Supply_Chain_Management.git
-   git push -u origin main
-   ```
 
 ---
 

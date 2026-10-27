@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multipurpose Supply Chain Management — Complete Developer Manual</title>
+  <style>
+    :root {
+      --primary: #0b1727;
+      --secondary: #1e293b;
+      --aws-orange: #ff9900;
+      --aws-blue: #146eb4;
+      --accent-purple: #9333ea;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --bg-light: #f8fafc;
+      --border: #e2e8f0;
+      --emerald: #059669;
+      --rose: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-light);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 80px 24px;
+    }
+    header.manual-header {
+      background: linear-gradient(135deg, #0b1727 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 48px 36px;
+      border-radius: 16px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(255, 153, 0, 0.15);
+      border: 1px solid var(--aws-orange);
+      color: var(--aws-orange);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+    h2 { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin: 36px 0 16px 0; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    h3 { font-size: 1.1rem; font-weight: 600; color: var(--aws-orange); margin: 24px 0 10px 0; }
+    p { margin-bottom: 14px; font-size: 0.95rem; color: #334155; }
+    .meta-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 24px;
+      font-size: 0.85rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .meta-box span { color: #94a3b8; }
+    .meta-box strong { color: #f8fafc; }
+    .callout {
+      background: #f1f5f9;
+      border-left: 4px solid var(--aws-orange);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin: 20px 0;
+      font-size: 0.92rem;
+    }
+    .callout-purple {
+      background: #faf5ff;
+      border-left: 4px solid var(--accent-purple);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin: 20px 0;
+      font-size: 0.92rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.88rem;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    th { background: #f8fafc; font-weight: 600; color: var(--primary); }
+    pre {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      margin: 16px 0;
+      line-height: 1.45;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85em;
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0f172a;
+    }
+    ul, ol { margin: 12px 0 16px 24px; font-size: 0.92rem; }
+    li { margin-bottom: 6px; }
+    .print-btn {
+      position: absolute;
+      top: 48px;
+      right: 36px;
+      background: var(--aws-orange);
+      color: #0b1727;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+      transition: all 0.2s;
+    }
+    .print-btn:hover { background: #e68a00; }
+    @media print {
+      body { background: #ffffff; }
+      .container { max-width: 100%; padding: 0; }
+      .print-btn { display: none; }
+      header.manual-header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="manual-header">
+      <span class="badge">AWS Cloud & Blockchain Architecture Manual</span>
+      <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <h1>Multipurpose Supply Chain Management Platform</h1>
+      <p style="color: #cbd5e1; font-size: 1.05rem;">
+        End-to-End Architectural Blueprint, Implementation Manual, and AWS Cloud + Cryptographic Blockchain Engineering Guide
+      </p>
+
+      <div class="meta-box">
+        <div><span>Author / Architect:</span><br><strong>Hardik Jha</strong></div>
+        <div><span>Cloud Stack:</span><br><strong>AWS (DynamoDB, SQS, SNS, S3, IoT)</strong></div>
+        <div><span>Blockchain:</span><br><strong>PoA / Amazon Managed Blockchain</strong></div>
+        <div><span>Live Application:</span><br><strong>GitHub Pages CDN</strong></div>
+      </div>
+    </header>
+
+    <div class="callout">
+      <strong>Executive Summary:</strong> This developer manual provides an exhaustive breakdown of the Multipurpose Supply Chain Management platform. It covers the end-to-end design from ground zero, explaining why specific architectural patterns were chosen, how asynchronous event queues prevent order drops, how IoT cold-chain telemetry triggers smart contracts, and how the immutable blockchain ledger guarantees multi-party chain-of-custody.
+    </div>
+
+    <h2>1. Executive Problem Statement & Multipurpose Scope</h2>
+    <p>
+      Legacy enterprise supply chains face severe structural bottlenecks: synchronous database locks during order spikes, high rates of perishable cold-chain spoilage, and lack of verified multi-party trust. Our architecture handles four distinct industry sectors under a single unified platform:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Industry Vertical</th>
+          <th>Physical & Environmental Requirements</th>
+          <th>Cloud & Blockchain Enforcements</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pharmaceutical Cold-Chain</strong></td>
+          <td>Strict 2°C to 8°C thermal buffer; cryogenic (-40°C to -80°C) storage for vaccines.</td>
+          <td>IoT rules evaluate live sensor streams. Out-of-range readings trigger instant Amazon SNS alerts and freeze smart contract escrow.</td>
+        </tr>
+        <tr>
+          <td><strong>High-Tech Semiconductors</strong></td>
+          <td>Cleanroom ESD protection; vibration and mechanical shock safeguards.</td>
+          <td>Accelerometer telemetry monitored in real-time. Shocks > 4.5G trigger transit inspection warnings on the ledger.</td>
+        </tr>
+        <tr>
+          <td><strong>Industrial Machinery</strong></td>
+          <td>Heavy components, multi-tier purchase orders, and supplier SLA compliance.</td>
+          <td>Supplier reliability ratings, automated S3 bills of lading, and verified lead-time monitoring.</td>
+        </tr>
+        <tr>
+          <td><strong>Biotechnology Assays</strong></td>
+          <td>Enzyme viability, light sensitivity, and strict batch-lot traceability.</td>
+          <td>DynamoDB safety stock reorder triggers and digital tamper-evident chain of custody.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2. System Architecture & AWS Cloud Topology</h2>
+    <p>
+      The architecture follows an <strong>event-driven, decoupled microservices paradigm</strong>. Incoming orders do not execute synchronous database writes; instead, they are absorbed into durable Amazon SQS buffers, ensuring zero order loss during high throughput.
+    </p>
+
+    <pre>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       React 18 Single Page Application                      │
+│                  (GitHub Pages CDN / AWS CloudFront + S3)                   │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ REST / HTTPS JSON
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     API Gateway / Express.js REST Layer                     │
+└───┬───────────────────┬───────────────────┬───────────────────┬─────────────┘
+    │                   │                   │                   │
+    ▼                   ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────┐ ┌───────────────┐ ┌───────────────────────┐
+│ Amazon DynamoDB │ │  Amazon S3  │ │  Amazon SQS   │ │   Blockchain Ledger   │
+│ - Inventory     │ │ (Invoices & │ │ (Async Queue  │ │ (Amazon Managed Chain │
+│ - Orders        │ │  Compliance │ │  with DLQ)    │ │  SHA-256 Merkle Chain │
+│ - Shipments     │ │  Documents) │ └───────┬───────┘ │  Smart Contracts)     │
+│ - IoT Telemetry │ └─────────────┘         │         └───────────────────────┘
+└─────────────────┘                         ▼
+                                   ┌─────────────────┐
+                                   │ Lambda / Worker │
+                                   └─────────────────┘</pre>
+
+    <h2>3. Blockchain & Smart Contract Implementation</h2>
+    <div class="callout-purple">
+      <strong>Why Blockchain in Supply Chain?</strong> In global logistics, multiple competing entities (manufacturers, customs officials, freight forwarders, and consignees) need a single, immutable source of truth. Traditional databases can be edited by whoever owns the server; blockchain provides a tamper-proof cryptographic ledger with automated smart contract compliance.
+    </div>
+
+    <h3>3.1 Cryptographic Merkle Chain Structure</h3>
+    <p>
+      Every block in the chain contains:
+    </p>
+    <ul>
+      <li><strong>Index & Timestamp:</strong> Chronological block ordering.</li>
+      <li><strong>Previous Hash:</strong> SHA-256 hash pointer to the predecessor block, creating an unbreakable Merkle chain.</li>
+      <li><strong>Transactions Array:</strong> Custody handovers, purchase orders, and IoT sensor checkpoint records.</li>
+      <li><strong>Digital HMAC Signatures:</strong> Every transaction is signed with cryptographic keys (<code>0x...</code>).</li>
+      <li><strong>Mining Nonce:</strong> Proof-of-Authority / Proof-of-Work difficulty proof.</li>
+    </ul>
+
+    <h3>3.2 Automated Cold-Chain Escrow Smart Contract</h3>
+    <p>
+      The <code>SC-COLD-CHAIN-SLA</code> smart contract continuously listens to IoT sensor beacons:
+    </p>
+    <pre>
+// Smart Contract SLA Evaluation
+if (temperature < 2 || temperature > 8) {
+  contract.status = 'BREACH_DETECTED_ESCROW_FROZEN';
+  contract.slaPassed = false;
+  // Commit infraction to immutable ledger
+  blockchain.createTransaction('SMART_CONTRACT_EVALUATION', {
+    shipmentId,
+    status: 'SLA_VIOLATION_PENALTY_LOCKED',
+    action: 'Escrow Frozen. Penalty Clause Executed.'
+  });
+}</pre>
+
+    <h2>4. Step-by-Step Implementation Journey (0 to Production)</h2>
+    <ol>
+      <li><strong>Phase 1 — Scaffolding & CI/CD:</strong> Root package setup, comprehensive <code>.gitignore</code>, and GitHub Actions workflow.</li>
+      <li><strong>Phase 2 — Terraform Cloud Infrastructure:</strong> Declarative HCL templates for DynamoDB, SQS with DLQ redrive, SNS alerts, and S3 encryption.</li>
+      <li><strong>Phase 3 — Backend REST API & AWS SDK v3:</strong> Express server with transparent live AWS SDK and local offline in-memory fallback.</li>
+      <li><strong>Phase 4 — Frontend SCM Control Tower:</strong> Modern React + Tailwind CSS dashboard with live telemetry charts and SQS pipeline monitor.</li>
+      <li><strong>Phase 5 — Docker & IoT Simulator:</strong> Multi-container compose configuration and CLI sensor streaming tool.</li>
+      <li><strong>Phase 6 — GitHub Pages Live Deployment:</strong> Automated static build workflow and in-browser cloud simulator.</li>
+      <li><strong>Phase 7 — Blockchain & Smart Contract Engine:</strong> SHA-256 Merkle chain, PoA consensus, and automated Cold-Chain escrow smart contracts.</li>
+    </ol>
+
+    <h2>5. Security, Privacy & Public vs. Private Infrastructure</h2>
+    <div class="callout">
+      <strong>Is Terraform Code Safe Publicly?</strong>
+      <p style="margin-top: 6px;">
+        <strong>YES.</strong> Terraform templates describe <em>what</em> resources to provision, not credentials. 
+        Zero AWS access keys, passwords, or <code>.tfstate</code> files are stored in Git. All secrets are managed exclusively through environment variables and strictly excluded via <code>.gitignore</code>.
+      </p>
+    </div>
+
+    <h2>6. Developer Runbook & Verification</h2>
+    <pre>
+# Start Backend API (Port 5000)
+cd server && npm install && npm run dev
+
+# Start Frontend Control Tower (Port 5173) in a second terminal
+cd client && npm install && npm run dev
+
+# Simulate Real-Time IoT Sensor Telemetry in a third terminal
+node scripts/simulate-iot.js</pre>
+
+    <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-muted); text-align: center;">
+      Multipurpose Supply Chain Management Platform — Developed by Hardik Jha. Published under MIT License.
+    </footer>
+  </div>
+</body>
+</html>

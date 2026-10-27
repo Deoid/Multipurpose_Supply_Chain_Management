@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import Shipments from './pages/Shipments';
+import Blockchain from './pages/Blockchain';
 import Suppliers from './pages/Suppliers';
 import Architecture from './pages/Architecture';
 import { fetchControlTower } from './services/api';
@@ -30,7 +31,6 @@ export default function App() {
 
   useEffect(() => {
     loadControlTowerData();
-    // Auto-refresh metrics every 15 seconds
     const interval = setInterval(loadControlTowerData, 15000);
     return () => clearInterval(interval);
   }, []);
@@ -61,6 +61,7 @@ export default function App() {
             {activeTab === 'shipments' && (
               <Shipments onRefreshControlTower={loadControlTowerData} />
             )}
+            {activeTab === 'blockchain' && <Blockchain />}
             {activeTab === 'suppliers' && <Suppliers />}
             {activeTab === 'architecture' && <Architecture />}
           </div>

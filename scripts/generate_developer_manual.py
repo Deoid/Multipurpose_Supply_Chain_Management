@@ -2,12 +2,12 @@
 """
 Multipurpose Supply Chain Management - Comprehensive Developer Manual Generator
 Generates a complete, deep-dive engineering PDF covering every architectural detail,
-implementation step from 0 to production, data models, AWS services, and security practices.
+implementation step from 0 to production, data models, AWS services, blockchain ledger,
+smart contracts, and security practices.
 """
 
 import os
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import (
@@ -17,7 +17,6 @@ from reportlab.platypus import (
     Table,
     TableStyle,
     PageBreak,
-    KeepTogether,
     HRFlowable,
 )
 from reportlab.pdfgen import canvas
@@ -32,7 +31,7 @@ TEXT_MUTED = HexColor("#475569")
 BG_LIGHT = HexColor("#F8FAFC")
 BORDER_LIGHT = HexColor("#E2E8F0")
 ACCENT_GREEN = HexColor("#059669")
-ACCENT_RED = HexColor("#DC2626")
+ACCENT_PURPLE = HexColor("#7E22CE")
 
 class NumberedCanvas(canvas.Canvas):
     """Two-pass canvas to dynamically compute and print 'Page X of Y'"""
@@ -53,7 +52,6 @@ class NumberedCanvas(canvas.Canvas):
         super().save()
 
     def draw_page_decorations(self, total_pages):
-        # Don't draw headers/footers on cover page
         if self._pageNumber == 1:
             return
 
@@ -62,7 +60,7 @@ class NumberedCanvas(canvas.Canvas):
         self.setFillColor(TEXT_MUTED)
 
         # Header
-        self.drawString(54, 750, "Multipurpose Supply Chain Management — AWS Cloud Engineering Manual")
+        self.drawString(54, 750, "Multipurpose SCM — AWS Cloud & Blockchain Engineering Manual")
         self.setStrokeColor(BORDER_LIGHT)
         self.setLineWidth(0.5)
         self.line(54, 744, letter[0] - 54, 744)
@@ -86,13 +84,12 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
 
     styles = getSampleStyleSheet()
 
-    # Custom styles
     title_style = ParagraphStyle(
         'CoverTitle',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=28,
-        leading=34,
+        fontSize=26,
+        leading=32,
         textColor=PRIMARY_NAVY,
         spaceAfter=10,
     )
@@ -101,18 +98,18 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         'CoverSubtitle',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=13,
-        leading=18,
+        fontSize=12,
+        leading=16,
         textColor=AWS_BLUE,
-        spaceAfter=25,
+        spaceAfter=20,
     )
 
     meta_style = ParagraphStyle(
         'CoverMeta',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=9.5,
-        leading=14,
+        fontSize=9,
+        leading=13.5,
         textColor=TEXT_MUTED,
     )
 
@@ -120,11 +117,11 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         'SectionH1',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=18,
-        leading=22,
+        fontSize=16,
+        leading=20,
         textColor=PRIMARY_NAVY,
-        spaceBefore=18,
-        spaceAfter=10,
+        spaceBefore=16,
+        spaceAfter=8,
         keepWithNext=True,
     )
 
@@ -132,10 +129,10 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         'SectionH2',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=13,
-        leading=17,
+        fontSize=12,
+        leading=16,
         textColor=AWS_ORANGE,
-        spaceBefore=14,
+        spaceBefore=12,
         spaceAfter=6,
         keepWithNext=True,
     )
@@ -144,10 +141,10 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         'SectionH3',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=10.5,
-        leading=14,
+        fontSize=10,
+        leading=13.5,
         textColor=SECONDARY_NAVY,
-        spaceBefore=10,
+        spaceBefore=9,
         spaceAfter=4,
         keepWithNext=True,
     )
@@ -156,43 +153,34 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         'BodyDark',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=9.5,
-        leading=13.5,
+        fontSize=9,
+        leading=13,
         textColor=TEXT_DARK,
-        spaceAfter=8,
+        spaceAfter=7,
     )
 
     bullet_style = ParagraphStyle(
         'BulletDark',
         parent=styles['Normal'],
         fontName='Helvetica',
-        fontSize=9.2,
-        leading=13,
+        fontSize=8.8,
+        leading=12.5,
         textColor=TEXT_DARK,
-        leftIndent=15,
-        spaceAfter=4,
+        leftIndent=14,
+        spaceAfter=3,
     )
 
     code_style = ParagraphStyle(
         'CodeSnippet',
         parent=styles['Normal'],
         fontName='Courier',
-        fontSize=8,
-        leading=10.5,
+        fontSize=7.5,
+        leading=10,
         textColor=HexColor('#0F172A'),
         backColor=HexColor('#F1F5F9'),
-        borderPadding=6,
-        spaceBefore=6,
-        spaceAfter=8,
-    )
-
-    callout_style = ParagraphStyle(
-        'CalloutText',
-        parent=styles['Normal'],
-        fontName='Helvetica-Oblique',
-        fontSize=9,
-        leading=12.5,
-        textColor=SECONDARY_NAVY,
+        borderPadding=5,
+        spaceBefore=5,
+        spaceAfter=7,
     )
 
     story = []
@@ -200,16 +188,17 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
     # =========================================================================
     # COVER PAGE
     # =========================================================================
-    story.append(Spacer(1, 40))
-    story.append(Paragraph("CLOUD ARCHITECTURE & ENGINEERING SPECIFICATION", ParagraphStyle('Badge', fontName='Helvetica-Bold', fontSize=10, textColor=AWS_ORANGE, spaceAfter=8)))
+    story.append(Spacer(1, 30))
+    story.append(Paragraph("CLOUD & BLOCKCHAIN ARCHITECTURE SPECIFICATION", ParagraphStyle('Badge', fontName='Helvetica-Bold', fontSize=10, textColor=AWS_ORANGE, spaceAfter=8)))
     story.append(Paragraph("Multipurpose Supply Chain Management Platform", title_style))
-    story.append(Paragraph("End-to-End Architectural Blueprint, Implementation Manual, and AWS Cloud Engineering Guide from Ground Zero to Production", subtitle_style))
-    story.append(HRFlowable(width="100%", thickness=2, color=AWS_ORANGE, spaceBefore=0, spaceAfter=20))
+    story.append(Paragraph("End-to-End Architectural Blueprint, Implementation Manual, AWS Cloud Services, and Cryptographic Blockchain Smart Contracts", subtitle_style))
+    story.append(HRFlowable(width="100%", thickness=2, color=AWS_ORANGE, spaceBefore=0, spaceAfter=18))
 
     meta_text = """
     <b>Author / Lead Architect:</b> Hardik Jha<br/>
-    <b>Target Cloud Environment:</b> Amazon Web Services (AWS) & Hybrid Mock Layer<br/>
-    <b>Primary AWS Services:</b> Amazon DynamoDB, Amazon SQS (with DLQ), Amazon SNS, Amazon S3, AWS IoT Core<br/>
+    <b>Cloud Infrastructure:</b> Amazon Web Services (DynamoDB, SQS, SNS, S3, IoT Core, IAM)<br/>
+    <b>Blockchain Engine:</b> SHA-256 Merkle Chain, Proof-of-Authority (PoA) / Amazon Managed Blockchain<br/>
+    <b>Smart Contracts:</b> Cold-Chain Compliance & Escrow Release Contract (SC-COLD-CHAIN-SLA)<br/>
     <b>Infrastructure as Code:</b> HashiCorp Terraform (v1.5+)<br/>
     <b>Application Stack:</b> Node.js v20 (Express), React 18, Vite, Tailwind CSS, Lucide Icons, Recharts<br/>
     <b>Repository:</b> github.com/Deoid/Multipurpose_Supply_Chain_Management<br/>
@@ -217,23 +206,23 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
     <b>Document Classification:</b> Production Engineering Whitepaper (Technical Reference)
     """
     story.append(Paragraph(meta_text, meta_style))
-    story.append(Spacer(1, 30))
+    story.append(Spacer(1, 20))
 
-    # Executive Overview Callout
     callout_data = [[
         Paragraph(
             "<b>Architectural Directive:</b> This document provides an exhaustive, developer-grade breakdown "
             "of the Multipurpose Supply Chain Management system. It details why specific architectural decisions "
             "were chosen, how asynchronous event buses mitigate order spikes, how time-series IoT sensors enforce "
-            "cold-chain compliance, the exact data schemas, and the complete security perimeter isolation model.",
-            callout_style
+            "cold-chain compliance, how the cryptographic Blockchain ledger guarantees immutable chain-of-custody, "
+            "and the complete security perimeter isolation model.",
+            ParagraphStyle('CalloutText', parent=styles['Normal'], fontName='Helvetica-Oblique', fontSize=8.8, leading=12, textColor=SECONDARY_NAVY)
         )
     ]]
     callout_table = Table(callout_data, colWidths=[letter[0] - 108])
     callout_table.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,-1), HexColor('#F8FAFC')),
         ('BOX', (0,0), (-1,-1), 1, AWS_ORANGE),
-        ('PADDING', (0,0), (-1,-1), 10),
+        ('PADDING', (0,0), (-1,-1), 8),
     ]))
     story.append(callout_table)
     story.append(PageBreak())
@@ -242,7 +231,7 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
     # CHAPTER 1: Problem Statement & Multipurpose Scope
     # =========================================================================
     story.append(Paragraph("1. Executive Problem Statement & Multipurpose Scope", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
 
     story.append(Paragraph("1.1 The Operational Crisis in Modern Global Supply Chains", h2_style))
     story.append(Paragraph(
@@ -262,16 +251,16 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
     ))
 
     verticals_table_data = [
-        [Paragraph("<b>Vertical</b>", body_style), Paragraph("<b>Physical Requirements</b>", body_style), Paragraph("<b>Cloud & Telemetry Enforcements</b>", body_style)],
+        [Paragraph("<b>Vertical</b>", body_style), Paragraph("<b>Physical Requirements</b>", body_style), Paragraph("<b>Cloud & Blockchain Enforcements</b>", body_style)],
         [
             Paragraph("<b>Pharmaceutical Cold-Chain</b>", body_style),
             Paragraph("Strict 2°C to 8°C thermal buffer; ultra-cold -20°C to -80°C cryogenic storage for mRNA biologics.", body_style),
-            Paragraph("AWS IoT rules evaluate continuous temperature streams. Deviations (>8°C or <2°C) trigger Amazon SNS instant alert fanout.", body_style)
+            Paragraph("AWS IoT rules evaluate continuous temperature streams. Deviations (>8°C or <2°C) trigger Amazon SNS alerts and freeze smart contract escrow on the blockchain.", body_style)
         ],
         [
             Paragraph("<b>High-Tech Semiconductors</b>", body_style),
             Paragraph("Electrostatic Discharge (ESD) cleanrooms, low humidity, severe shock and vibration safeguards.", body_style),
-            Paragraph("High-frequency accelerometer tracking. Shock events >4.5G trigger transit inspection warnings.", body_style)
+            Paragraph("High-frequency accelerometer tracking. Shock events >4.5G trigger transit inspection warnings on the immutable ledger.", body_style)
         ],
         [
             Paragraph("<b>Industrial Machinery</b>", body_style),
@@ -281,26 +270,78 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
         [
             Paragraph("<b>Biotechnology Assays</b>", body_style),
             Paragraph("Light-sensitive reagents, diagnostic PCR kits, batch-lot tracking with strict shelf-life expiry.", body_style),
-            Paragraph("Dynamic safety stock calculations and low-stock automatic reorder alerts via DynamoDB.", body_style)
+            Paragraph("Dynamic safety stock calculations, low-stock reorder alerts, and cryptographically verified custody transfers.", body_style)
         ],
     ]
-    v_table = Table(verticals_table_data, colWidths=[120, 180, 204])
+    v_table = Table(verticals_table_data, colWidths=[115, 180, 209])
     v_table.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), HexColor('#F1F5F9')),
         ('GRID', (0,0), (-1,-1), 0.5, BORDER_LIGHT),
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('PADDING', (0,0), (-1,-1), 6),
+        ('PADDING', (0,0), (-1,-1), 5),
     ]))
     story.append(v_table)
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 8))
 
     # =========================================================================
-    # CHAPTER 2: Cloud Architecture & Component Topography
+    # CHAPTER 2: Blockchain & Smart Contract Architecture
     # =========================================================================
-    story.append(Paragraph("2. System Architecture & AWS Cloud Topography", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
+    story.append(Paragraph("2. Blockchain Ledger & Smart Contract Implementation", h1_style))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
 
-    story.append(Paragraph("2.1 High-Level Architecture Topology", h2_style))
+    story.append(Paragraph("2.1 The Multi-Party Trust Problem in Global Logistics", h2_style))
+    story.append(Paragraph(
+        "In global supply chains, goods pass through manufacturers, freight carriers, customs checkpoints, and regional distribution hubs. "
+        "Traditional databases are maintained by a single entity who has write access and can alter records after transit disputes occur. "
+        "To establish absolute multi-party trust, our platform integrates an <b>Immutable Cryptographic Blockchain Ledger</b> powered by SHA-256 Merkle chains "
+        "and Proof-of-Authority (PoA) consensus (matching the architecture of Amazon Managed Blockchain and Hyperledger Fabric).",
+        body_style
+    ))
+
+    story.append(Paragraph("2.2 Block Structure & Cryptographic Mining", h2_style))
+    story.append(Paragraph(
+        "Each block is cryptographically linked to its predecessor via SHA-256 hashing. Modifying any historical block alters its hash and immediately "
+        "invalidates the entire chain:",
+        body_style
+    ))
+
+    chain_code = """
+class Block {
+  constructor(index, timestamp, transactions, previousHash = '', nonce = 0) {
+    this.index = index;
+    this.timestamp = timestamp;
+    this.transactions = transactions; // Custody transfers, Smart Contract events
+    this.previousHash = previousHash;
+    this.nonce = nonce;
+    this.hash = this.calculateHash();
+  }
+
+  calculateHash() {
+    const dataString = this.index + this.previousHash + this.timestamp +
+                       JSON.stringify(this.transactions) + this.nonce;
+    return crypto.createHash('sha256').update(dataString).digest('hex');
+  }
+}
+    """
+    story.append(Paragraph(chain_code.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
+
+    story.append(Paragraph("2.3 Automated Cold-Chain Escrow Smart Contracts", h2_style))
+    story.append(Paragraph(
+        "The system deploys the <code>SC-COLD-CHAIN-SLA</code> smart contract. As IoT sensors transmit temperature readings along shipping routes, "
+        "an automated Oracle node evaluates the contract conditions. If the temperature exceeds safe limits (>8°C), the smart contract automatically "
+        "freezes the escrow pool ($25,000 USD) and records an immutable breach transaction onto the blockchain.",
+        body_style
+    ))
+
+    story.append(PageBreak())
+
+    # =========================================================================
+    # CHAPTER 3: Cloud Architecture & Topography
+    # =========================================================================
+    story.append(Paragraph("3. System Architecture & AWS Cloud Topography", h1_style))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
+
+    story.append(Paragraph("3.1 High-Level Architecture Topology", h2_style))
     story.append(Paragraph(
         "The architecture is designed around an <b>event-driven, decoupled microservices paradigm</b>. "
         "Client requests never directly execute slow disk transactions or synchronous vendor dependencies. Instead, requests enter "
@@ -320,12 +361,12 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
 +----------+-----------------+-------------------+----------------+---------------+
            |                 |                   |                |
            v                 v                   v                v
-+--------------------+ +-----------+     +---------------+ +--------------+
-|  Amazon DynamoDB   | | Amazon S3 |     |  Amazon SQS   | |  Amazon SNS  |
-|  - scm-inventory   | | Documents |     |  Orders Queue | | Alert Topic  |
-|  - scm-orders      | | Invoices  |     |   (with DLQ)  | | Email / SMS  |
-|  - scm-shipments   | |  Proofs   |     +-------+-------+ +--------------+
-|  - scm-suppliers   | +-----------+             |
++--------------------+ +-----------+     +---------------+ +----------------------+
+|  Amazon DynamoDB   | | Amazon S3 |     |  Amazon SQS   | |  Blockchain Ledger   |
+|  - scm-inventory   | | Documents |     |  Orders Queue | |  - SHA-256 Merkle    |
+|  - scm-orders      | | Invoices  |     |   (with DLQ)  | |  - Smart Contracts   |
+|  - scm-shipments   | |  Proofs   |     +-------+-------+ |  - Escrow Pools      |
+|  - scm-suppliers   | +-----------+             |         +----------------------+
 |  - scm-telemetry   |                           v
 +--------------------+                 +-------------------+
                                        | Background Worker |
@@ -334,25 +375,22 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
     """
     story.append(Paragraph(arch_diagram_code.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
 
-    story.append(Paragraph("2.2 Deep Dive: Individual AWS Services & Roles", h2_style))
-    
+    story.append(Paragraph("3.2 Deep Dive: Individual AWS Services & Roles", h2_style))
     aws_breakdown = [
         ("Amazon DynamoDB (Operational Store)", "Chosen for predictable single-digit millisecond latency at any throughput scale. Uses composite primary keys (Partition Key + Sort Key) and Global Secondary Indexes (GSIs). An automated Time-to-Live (TTL) attribute is assigned to IoT telemetry records to automatically prune aging time-series without incurred write/delete IOPS costs."),
         ("Amazon SQS (Decoupled Message Queue)", "Acts as the shock-absorber for order placement. Ingests high-concurrency order spikes into a durable buffer. Configured with a visibility timeout of 60 seconds, long-polling (10s) to minimize empty receives, and a Dead-Letter Queue (DLQ) with maxReceiveCount = 3 to quarantine malformed messages without blocking the queue."),
         ("Amazon SNS (Pub/Sub Notification Engine)", "Provides instant multi-channel alert fanout. Subscribed endpoints (such as cold-chain logistics operations emails, mobile SMS, or automated webhooks) receive immediate notification when IoT sensors detect temperature violations or stock is below safety levels."),
         ("Amazon S3 (Immutable Document Lake)", "Provides 99.999999999% (11 9s) durability for compliance artifacts. Stores digital purchase invoices, bills of lading, and signature receipts. Server-Side Encryption (SSE-S3 AES-256) and bucket versioning protect documents against tampering or accidental deletion."),
-        ("AWS IoT Core & Rules Engine", "Simulates and ingests telemetry emitted from GPS/cellular beacons attached to cargo trucks. A rules engine parses sensor payloads and immediately diverts critical anomalies to SNS while archiving continuous metrics into DynamoDB."),
+        ("Amazon Managed Blockchain (AMB)", "Provides immutable multi-party ledger storage, validating digital HMAC-SHA-256 custody signatures across suppliers, logistics carriers, and warehouse inspectors."),
     ]
     for s_name, s_desc in aws_breakdown:
         story.append(Paragraph(f"• <b>{s_name}:</b> {s_desc}", bullet_style))
 
-    story.append(PageBreak())
-
     # =========================================================================
-    # CHAPTER 3: Step-by-Step Implementation Journey (0 to Production)
+    # CHAPTER 4: Step-by-Step Implementation Journey (0 to Production)
     # =========================================================================
-    story.append(Paragraph("3. Step-by-Step Engineering Journey (From Zero to Production)", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
+    story.append(Paragraph("4. Step-by-Step Engineering Journey (From Zero to Production)", h1_style))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
 
     story.append(Paragraph(
         "The project was engineered modularly across distinct phases, with atomic Git commits marking each milestone. "
@@ -393,120 +431,26 @@ def build_pdf(filename="Multipurpose_SCM_Complete_Developer_Manual.pdf"):
          "Git commits: 63bf77e, 4dba302, fdfe430<br/>"
          "Engineered a dedicated GitHub Actions workflow (.github/workflows/deploy-gh-pages.yml) using peaceiris/actions-gh-pages@v4. "
          "Added an in-browser client-side simulator in client/src/services/api.js so the live web app functions 100% interactively on GitHub Pages without requiring an external backend!"),
+
+        ("Phase 7: Cryptographic Blockchain Ledger & Smart Contracts",
+         "Added blockchainService.js, blockchainController.js, and client/src/pages/Blockchain.jsx with live block explorer, "
+         "Merkle SHA-256 chain verification, automated escrow execution, and digital custody handover signatures."),
     ]
 
     for p_title, p_desc in phases:
         story.append(Paragraph(f"<b>{p_title}</b>", h3_style))
         story.append(Paragraph(p_desc, body_style))
-        story.append(Spacer(1, 4))
+        story.append(Spacer(1, 3))
 
-    # =========================================================================
-    # CHAPTER 4: Data Models & Schema Design
-    # =========================================================================
-    story.append(Paragraph("4. Data Models, DynamoDB Schemas & Document Storage", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
-
-    story.append(Paragraph("4.1 DynamoDB Table Schemas", h2_style))
-    story.append(Paragraph(
-        "DynamoDB is a NoSQL key-value and document database. Below are the schema definitions and indexing strategies:",
-        body_style
-    ))
-
-    schema_data = [
-        [Paragraph("<b>Table Name</b>", body_style), Paragraph("<b>Partition Key (PK)</b>", body_style), Paragraph("<b>Sort Key (SK)</b>", body_style), Paragraph("<b>GSIs / TTL</b>", body_style)],
-        [
-            Paragraph("scm-inventory", body_style),
-            Paragraph("warehouseId (S)", body_style),
-            Paragraph("sku (S)", body_style),
-            Paragraph("CategoryIndex on 'category' for fast cross-warehouse category filters.", body_style)
-        ],
-        [
-            Paragraph("scm-orders", body_style),
-            Paragraph("orderId (S)", body_style),
-            Paragraph("None", body_style),
-            Paragraph("StatusCreatedAtGSI on 'status' + 'createdAt' for pipeline stage queries.", body_style)
-        ],
-        [
-            Paragraph("scm-shipments", body_style),
-            Paragraph("shipmentId (S)", body_style),
-            Paragraph("None", body_style),
-            Paragraph("OrderIdIndex and StatusIndex for fast logistics relationship lookups.", body_style)
-        ],
-        [
-            Paragraph("scm-iot-telemetry", body_style),
-            Paragraph("shipmentId (S)", body_style),
-            Paragraph("timestamp (S)", body_style),
-            Paragraph("Attribute 'ttl' enabled with 30-day epoch expiration for automatic data aging.", body_style)
-        ],
-        [
-            Paragraph("scm-suppliers", body_style),
-            Paragraph("supplierId (S)", body_style),
-            Paragraph("None", body_style),
-            Paragraph("Master profile storage for vendor rating, lead time, and contract status.", body_style)
-        ],
-    ]
-    s_table = Table(schema_data, colWidths=[100, 110, 85, 209])
-    s_table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), HexColor('#F1F5F9')),
-        ('GRID', (0,0), (-1,-1), 0.5, BORDER_LIGHT),
-        ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('PADDING', (0,0), (-1,-1), 5),
-    ]))
-    story.append(s_table)
     story.append(PageBreak())
 
     # =========================================================================
-    # CHAPTER 5: Messaging & IoT Rules Engine Deep Dive
+    # CHAPTER 5: Security, Secrets & Public vs. Private Infrastructure
     # =========================================================================
-    story.append(Paragraph("5. Event-Driven Messaging & IoT Telemetry Processing", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
+    story.append(Paragraph("5. Cloud Security, Secrets Management & IaC Governance", h1_style))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
 
-    story.append(Paragraph("5.1 Asynchronous SQS Order Queue Workflow", h2_style))
-    story.append(Paragraph(
-        "When an order is created, the system executes three coordinated actions:<br/>"
-        "1. <b>Write to DynamoDB</b> with status = <code>QUEUED</code>.<br/>"
-        "2. <b>Dispatch message to Amazon SQS</b> (multipurpose-scm-orders-queue) containing order metadata and priority.<br/>"
-        "3. <b>Archive invoice document to Amazon S3</b> under <code>invoices/{orderId}.json</code>.<br/>"
-        "Background fulfillment workers poll the queue via <code>ReceiveMessageCommand</code> with 10-second long polling. "
-        "Upon successful processing, the order status transitions to <code>PROCESSING</code> and the message is deleted from the queue via <code>DeleteMessageCommand</code>.",
-        body_style
-    ))
-
-    story.append(Paragraph("5.2 IoT Cold-Chain Anomaly Detection & Rule Engine", h2_style))
-    story.append(Paragraph(
-        "Vehicles transmit telemetry containing temperature, humidity, shock, and GPS location. "
-        "The backend service (<code>iotSimulatorService.js</code>) evaluates real-time telemetry against threshold rules:",
-        body_style
-    ))
-
-    code_rule = """
-// Cold-Chain Threshold Rule: Safe pharmaceutical range [2°C to 8°C]
-if (temperature < tempThresholdMin || temperature > tempThresholdMax) {
-  await snsNotificationService.publishAlert(
-    `Critical Cold-Chain Temperature Breach on Shipment #${shipmentId}`,
-    `Current temperature is ${temperature}°C, outside safe range [${tempThresholdMin}°C - ${tempThresholdMax}°C]. Location: ${location.city}.`,
-    'CRITICAL',
-    { shipmentId, temperature, category }
-  );
-} else if (shock > 4.5) {
-  // Mechanical Impact / Severe Road Pothole Rule
-  await snsNotificationService.publishAlert(
-    `High Shock / Vibration Event on Shipment #${shipmentId}`,
-    `Impact of ${shock}G detected. Package inspection required upon delivery.`,
-    'WARNING',
-    { shipmentId, shock, category }
-  );
-}
-    """
-    story.append(Paragraph(code_rule.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
-
-    # =========================================================================
-    # CHAPTER 6: Security, Secrets & Public vs. Private Infrastructure
-    # =========================================================================
-    story.append(Paragraph("6. Cloud Security, Secrets Management & IaC Governance", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
-
-    story.append(Paragraph("6.1 Why Terraform Code and CLI Commands Are Safe in Public Repositories", h2_style))
+    story.append(Paragraph("5.1 Why Terraform Code and CLI Commands Are Safe in Public Repositories", h2_style))
     story.append(Paragraph(
         "A common concern among developers is whether publishing Terraform code and CLI commands (e.g. <code>terraform apply</code>) "
         "poses a security vulnerability. <b>The answer is an unequivocal NO.</b>",
@@ -522,15 +466,13 @@ if (temperature < tempThresholdMin || temperature > tempThresholdMax) {
     for sp_title, sp_desc in sec_points:
         story.append(Paragraph(f"• <b>{sp_title}:</b> {sp_desc}", bullet_style))
 
-    story.append(PageBreak())
-
     # =========================================================================
-    # CHAPTER 7: Developer Runbook & Verification Guide
+    # CHAPTER 6: Developer Runbook & Verification Guide
     # =========================================================================
-    story.append(Paragraph("7. Developer Runbook & Local Execution Guide", h1_style))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=10))
+    story.append(Paragraph("6. Developer Runbook & Local Execution Guide", h1_style))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_LIGHT, spaceAfter=8))
 
-    story.append(Paragraph("7.1 Running the Project Locally", h2_style))
+    story.append(Paragraph("6.1 Running the Project Locally", h2_style))
     story.append(Paragraph(
         "The project includes an intelligent mock AWS adapter so that any engineer can run the system immediately "
         "without incurring AWS billing or configuring credentials:",
@@ -539,48 +481,27 @@ if (temperature < tempThresholdMin || temperature > tempThresholdMax) {
 
     runbook_commands = """
 # 1. Start Backend API Server (Port 5000)
-cd server
-npm install
-npm run dev
+cd server && npm install && npm run dev
 
 # 2. Start Frontend Web Dashboard (Port 5173) in a second terminal
-cd client
-npm install
-npm run dev
+cd client && npm install && npm run dev
 
 # 3. (Optional) Run Live IoT Vehicle Telemetry Stream in a third terminal
 node scripts/simulate-iot.js
     """
     story.append(Paragraph(runbook_commands.replace("\n", "<br/>").replace(" ", "&nbsp;"), code_style))
 
-    story.append(Paragraph("7.2 Connecting to Live AWS Cloud Services", h2_style))
+    story.append(Paragraph("6.2 Viewing the Documentation", h2_style))
     story.append(Paragraph(
-        "To switch from the local mock adapter to live AWS Cloud services:<br/>"
-        "1. Configure your AWS CLI credentials: <code>aws configure</code><br/>"
-        "2. Provision the AWS infrastructure via Terraform:<br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<code>cd terraform && terraform init && terraform apply</code><br/>"
-        "3. Copy the Terraform output ARNs and Table names into <code>server/.env</code>:<br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<code>AWS_MOCK=false</code><br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<code>AWS_REGION=us-east-1</code><br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<code>AWS_ACCESS_KEY_ID=AKIA...</code><br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<code>AWS_SECRET_ACCESS_KEY=...</code><br/>"
-        "4. Restart the backend server. The system automatically detects the credentials and routes all traffic to live AWS DynamoDB, SQS, SNS, and S3!",
-        body_style
-    ))
-
-    story.append(Spacer(1, 15))
-    story.append(Paragraph("7.3 Conclusion & Architectural Verification", h2_style))
-    story.append(Paragraph(
-        "This Multipurpose Supply Chain Management platform demonstrates how modern AWS Cloud services resolve the fundamental "
-        "flaws of traditional logistics systems. By combining asynchronous SQS queues for zero-order drops, DynamoDB for sub-millisecond stock ledgers, "
-        "IoT telemetry rules for cold-chain compliance, and Terraform for deterministic cloud provisioning, the system provides a production-ready "
-        "foundation capable of scaling across global enterprise supply chains.",
+        "• <b>Developer_Manual.html</b>: Double-click to open immediately in Google Chrome, Microsoft Edge, or Safari.<br/>"
+        "• <b>Multipurpose_SCM_Complete_Developer_Manual.pdf</b>: Open with Adobe Acrobat Reader, Chrome, or Edge (Right Click ➔ Open with ➔ Chrome).<br/>"
+        "• <b>Multipurpose_SCM_AWS_Architecture.pptx</b>: Open directly in Microsoft PowerPoint or Google Slides.",
         body_style
     ))
 
     # Build Document
     doc.build(story, canvasmaker=NumberedCanvas)
-    print(f"[SUCCESS] Developer Manual PDF generated successfully at: {os.path.abspath(filename)}")
+    print(f"[SUCCESS] Developer Manual PDF updated successfully at: {os.path.abspath(filename)}")
 
 if __name__ == '__main__':
     build_pdf()

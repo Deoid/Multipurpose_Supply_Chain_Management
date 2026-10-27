@@ -3,12 +3,12 @@ const dynamoDbService = require('../services/dynamoDbService');
 const sqsQueueService = require('../services/sqsQueueService');
 const snsNotificationService = require('../services/snsNotificationService');
 const s3StorageService = require('../services/s3StorageService');
+const blockchainService = require('../services/blockchainService');
 const { config } = require('../config/aws');
 
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await dynamoDbService.scanTable(config.ordersTable);
-    // Sort descending by createdAt
     orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json({ success: true, count: orders.length, data: orders });
   } catch (err) {
@@ -58,11 +58,26 @@ exports.createOrder = async (req, res) => {
       customer: order.customerName,
     });
 
-    // 4. Send SNS alert notification if high priority
+    // 4. Record Cryptographic Blockchain Transaction (Smart Contract Escrow Initiation)
+    const blockchainReceipt = blockchainService.createTransaction(
+      'ORDER_PURCHASE_ESCROW_INITIATED',
+      {
+        orderId,
+        customerName: order.customerName,
+        destinationCity: order.destinationCity,
+        totalAmount: order.totalAmount,
+        category: order.category,
+        priority: order.priority,
+        escrowLocked: true,
+      },
+      'ORDER_PROCESSING_ORACLE'
+    );
+
+    // 5. Send SNS alert notification if high priority
     if (priority === 'CRITICAL' || priority === 'EXPEDITED') {
       await snsNotificationService.publishAlert(
         `High Priority Order Enqueued: #${orderId}`,
-        `Order #${orderId} for ${order.customerName} has been queued via Amazon SQS with priority ${priority}.`,
+        `Order #${orderId} for ${order.customerName} has been queued via Amazon SQS and recorded on the immutable Blockchain Ledger.`,
         'INFO',
         { orderId, priority }
       );
@@ -70,10 +85,15 @@ exports.createOrder = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Order created, enqueued to Amazon SQS, and invoice archived in Amazon S3',
+      message: 'Order created, enqueued to Amazon SQS, and committed to Blockchain Ledger',
       data: order,
       sqs: {
         messageId: sqsResponse.MessageId,
+      },
+      blockchain: {
+        txId: blockchainReceipt.transaction.txId,
+        blockHash: blockchainReceipt.block.hash,
+        blockIndex: blockchainReceipt.block.index,
       },
       s3InvoiceUrl: `s3://${config.s3Bucket}/${invoiceKey}`,
     });
@@ -84,7 +104,6 @@ exports.createOrder = async (req, res) => {
 
 exports.processWorkerQueue = async (req, res) => {
   try {
-    // Worker polling Amazon SQS
     const messages = await sqsQueueService.receiveOrderMessages(5);
     const processed = [];
 
@@ -98,14 +117,19 @@ exports.processWorkerQueue = async (req, res) => {
 
       const orderData = body.order || body;
       if (orderData && orderData.orderId) {
-        // Move order from QUEUED -> PROCESSING
         await dynamoDbService.updateItem(
           config.ordersTable,
           { orderId: orderData.orderId },
           { status: 'PROCESSING', processedAt: new Date().toISOString() }
         );
 
-        // Delete from SQS once processed
+        // Record fulfillment milestone on Blockchain
+        blockchainService.createTransaction(
+          'ORDER_FULFILLMENT_STAGE_PROCESSING',
+          { orderId: orderData.orderId, stage: 'PACKAGING_AND_DRY_ICE_LOADED' },
+          'WAREHOUSE_ROBOTIC_WORKER'
+        );
+
         await sqsQueueService.deleteOrderMessage(msg.ReceiptHandle);
         processed.push(orderData.orderId);
       }

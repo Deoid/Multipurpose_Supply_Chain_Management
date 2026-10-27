@@ -1,5 +1,6 @@
 const dynamoDbService = require('./dynamoDbService');
 const snsNotificationService = require('./snsNotificationService');
+const blockchainService = require('./blockchainService');
 const { config } = require('../config/aws');
 
 class IotSimulatorService {
@@ -29,10 +30,10 @@ class IotSimulatorService {
       ttl: Math.floor(Date.now() / 1000) + 30 * 24 * 3600, // 30-day DynamoDB TTL
     };
 
-    // Store in DynamoDB Telemetry table
+    // 1. Store in DynamoDB Telemetry table
     await dynamoDbService.putItem(config.telemetryTable, record);
 
-    // Update current shipment state in Shipments table
+    // 2. Update current shipment state in Shipments table
     await dynamoDbService.updateItem(
       config.shipmentsTable,
       { shipmentId },
@@ -42,25 +43,35 @@ class IotSimulatorService {
       }
     );
 
-    // Rule: Cold-Chain breach detection
+    // 3. Execute Blockchain Smart Contract & commit transaction to immutable ledger
+    const smartContractReceipt = blockchainService.evaluateColdChainSmartContract(
+      shipmentId,
+      temperature,
+      shock
+    );
+
+    // 4. Rule: Cold-Chain breach detection
     if (temperature < tempThresholdMin || temperature > tempThresholdMax) {
       await snsNotificationService.publishAlert(
         `Critical Cold-Chain Temperature Breach on Shipment #${shipmentId}`,
-        `Current temperature is ${temperature}°C, outside safe range [${tempThresholdMin}°C - ${tempThresholdMax}°C]. Location: ${location?.city || 'In-Transit'}. Immediate action required.`,
+        `Current temperature is ${temperature}°C, outside safe range [${tempThresholdMin}°C - ${tempThresholdMax}°C]. Location: ${location?.city || 'In-Transit'}. Smart contract escrow frozen on blockchain.`,
         'CRITICAL',
         { shipmentId, temperature, category }
       );
     } else if (shock > 4.5) {
-      // Rule: Severe impact/shock detected
       await snsNotificationService.publishAlert(
         `High Shock / Vibration Event on Shipment #${shipmentId}`,
-        `A shock of ${shock}G was detected. Package inspection needed upon delivery. Location: ${location?.city || 'In-Transit'}.`,
+        `A shock of ${shock}G was detected. Impact infraction recorded on immutable blockchain ledger. Location: ${location?.city || 'In-Transit'}.`,
         'WARNING',
         { shipmentId, shock, category }
       );
     }
 
-    return record;
+    return {
+      ...record,
+      blockchainTxId: smartContractReceipt?.transaction?.txId,
+      blockchainBlockHash: smartContractReceipt?.block?.hash,
+    };
   }
 
   async getShipmentTelemetry(shipmentId) {

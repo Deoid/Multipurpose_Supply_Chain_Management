@@ -6,6 +6,7 @@ import {
   Truck,
   Building2,
   Cpu,
+  Link2,
   ShieldCheck,
 } from 'lucide-react';
 
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
   { id: 'inventory', label: 'Warehouse & Inventory', icon: Boxes },
   { id: 'orders', label: 'Orders & SQS Pipeline', icon: ShoppingCart },
   { id: 'shipments', label: 'Fleet & IoT Telemetry', icon: Truck },
+  { id: 'blockchain', label: 'Blockchain Ledger & Escrow', icon: Link2 },
   { id: 'suppliers', label: 'Supplier Procurement', icon: Building2 },
   { id: 'architecture', label: 'AWS Architecture & Docs', icon: Cpu },
 ];
@@ -48,12 +50,12 @@ export default function Sidebar({ activeTab, onSelectTab }) {
       </div>
 
       <div className="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60">
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 mb-1">
-          <ShieldCheck className="w-4 h-4" />
-          <span>AWS Security & IAM</span>
+        <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 mb-1">
+          <Link2 className="w-4 h-4" />
+          <span>Blockchain Integrity</span>
         </div>
         <p className="text-[11px] text-slate-400 leading-relaxed">
-          Zero-trust IAM policy, S3 AES-256 encryption, and DLQ redrive configured.
+          SHA-256 Merkle chain, PoA consensus, and automated cold-chain escrow release.
         </p>
       </div>
     </aside>

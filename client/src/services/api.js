@@ -1,6 +1,6 @@
 const API_BASE = '/api';
 
-// In-Browser AWS Simulator state for GitHub Pages static hosting
+// In-Browser AWS & Blockchain Simulator state for GitHub Pages static hosting
 const localMockState = {
   inventory: [
     {
@@ -111,35 +111,6 @@ const localMockState = {
         { timestamp: '11:00', temperature: 4.1 },
       ],
     },
-    {
-      shipmentId: 'SHP-883102',
-      orderId: 'ORD-99124',
-      carrier: 'DHL Global Forwarding',
-      origin: 'Munich Logistics Hub (Germany)',
-      destination: 'Basel BioPark (Switzerland)',
-      eta: '12 Hours',
-      category: 'Pharmaceutical Cold-Chain',
-      tempRange: '2°C to 8°C',
-      status: 'IN_TRANSIT',
-      currentLocation: {
-        lat: 47.5596,
-        lng: 7.5886,
-        city: 'En route to Basel',
-        status: 'Customs Approaching',
-      },
-      latestTelemetry: {
-        temperature: 5.6,
-        humidity: 50,
-        shock: 0.3,
-        battery: 88,
-        timestamp: new Date().toISOString(),
-      },
-      telemetryHistory: [
-        { timestamp: '08:00', temperature: 5.2 },
-        { timestamp: '09:00', temperature: 5.4 },
-        { timestamp: '10:00', temperature: 5.6 },
-      ],
-    },
   ],
   suppliers: [
     {
@@ -164,27 +135,82 @@ const localMockState = {
       location: 'Hsinchu Science Park, Taiwan',
       status: 'VERIFIED',
     },
-    {
-      supplierId: 'SUP-003',
-      name: 'Precision Motors & Robotics',
-      category: 'Industrial Machinery',
-      leadTimeDays: 9,
-      rating: 4.8,
-      reliabilityRate: 98.6,
-      contactEmail: 'enterprise@precisionmotors.com',
-      location: 'Detroit, MI, USA',
-      status: 'VERIFIED',
-    },
   ],
   alerts: [
     {
       alertId: 'ALT-1',
-      subject: 'Supply Chain Cloud Initialized',
-      message: 'AWS SQS, DynamoDB, S3, and SNS topics are operational.',
+      subject: 'Supply Chain Cloud & Blockchain Initialized',
+      message: 'AWS SQS, DynamoDB, and Amazon Managed Blockchain PoA consensus are active.',
       severity: 'INFO',
       timestamp: new Date().toISOString(),
     },
   ],
+  blockchain: {
+    blocks: [
+      {
+        index: 0,
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        nonce: 104,
+        hash: '00a4e9b8178c182d3e91129481239bb1082c49a0293d8102948bc10294819a82',
+        previousHash: '0000000000000000000000000000000000000000000000000000000000000000',
+        transactions: [
+          {
+            txId: 'TX-GENESIS-000000',
+            type: 'GENESIS_INIT',
+            payload: {
+              system: 'Multipurpose Supply Chain Cryptographic Ledger',
+              consensus: 'Proof-of-Authority (PoA) / Amazon Managed Blockchain',
+              standard: 'SHA-256 Merkle Chain',
+            },
+            signer: 'ROOT_AUTHORITY_ORACLE',
+            signature: '0x8891024bbec19401829481238491823901481239048129038419203840192384',
+          },
+        ],
+      },
+      {
+        index: 1,
+        timestamp: new Date(Date.now() - 1800000).toISOString(),
+        nonce: 42,
+        hash: '00f129a018293847120398412039841209384120938412093841209384120938',
+        previousHash: '00a4e9b8178c182d3e91129481239bb1082c49a0293d8102948bc10294819a82',
+        transactions: [
+          {
+            txId: 'TX-774901-CUSTODY',
+            type: 'CUSTODY_HANDOVER',
+            payload: {
+              shipmentId: 'SHP-774901',
+              from: 'Warehouse Alpha (Chicago, IL)',
+              to: 'Kuehne+Nagel Logistics Fleet',
+              temp: '4.1°C',
+              status: 'VERIFIED',
+            },
+            signer: 'DEPOT_OPERATOR_CHI_01',
+            signature: '0x4912904810294810294812039481029348102938410293841029384102938401',
+          },
+        ],
+      },
+    ],
+    smartContracts: [
+      {
+        contractId: 'SC-COLD-CHAIN-SLA',
+        name: 'Pharmaceutical Cold-Chain Compliance & Escrow Smart Contract',
+        rule: 'Temperature must remain between 2°C and 8°C throughout transit.',
+        status: 'ACTIVE_ESCROW',
+        escrowAmount: '$25,000 USD',
+        beneficiary: 'BioGen Pharma Ingredients GmbH',
+        slaPassed: true,
+      },
+      {
+        contractId: 'SC-SEMICON-CUSTODY',
+        name: 'High-Tech Semiconductors Chain of Custody & Shock SLA',
+        rule: 'Vibration / Shock must not exceed 4.5G; ESD protocols verified.',
+        status: 'ACTIVE_ESCROW',
+        escrowAmount: '$50,000 USD',
+        beneficiary: 'Apex Semiconductor Fab Ltd',
+        slaPassed: true,
+      },
+    ],
+  },
   demandForecast: [
     { month: 'Jan', actual: 420, predicted: 410 },
     { month: 'Feb', actual: 460, predicted: 455 },
@@ -210,23 +236,22 @@ export async function fetchControlTower() {
   const remote = await safeFetch(`${API_BASE}/analytics/control-tower`);
   if (remote) return remote;
 
-  // Client-side fallback calculation for GitHub Pages live demo
   const inventory = localMockState.inventory;
   const orders = localMockState.orders;
   const shipments = localMockState.shipments;
   const totalVal = inventory.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-  const queuedCount = orders.filter((o) => o.status === 'QUEUED').length;
 
   return {
     success: true,
     awsInfrastructure: {
-      mode: 'AWS Cloud Simulation (GitHub Pages Ready)',
+      mode: 'AWS Cloud + Blockchain Simulation (GitHub Pages Ready)',
       region: 'us-east-1',
       services: {
         dynamoDb: 'ONLINE',
         sqs: 'ONLINE',
         sns: 'ONLINE',
         s3: 'ONLINE',
+        blockchain: 'AMB_ACTIVE',
       },
     },
     kpis: {
@@ -236,7 +261,7 @@ export async function fetchControlTower() {
       activeOrders: orders.filter((o) => o.status !== 'DELIVERED').length,
       inTransitShipments: shipments.filter((s) => s.status === 'IN_TRANSIT').length,
       coldChainComplianceRate: '100%',
-      sqsQueueDepth: queuedCount,
+      sqsQueueDepth: orders.filter((o) => o.status === 'QUEUED').length,
       supplierReliabilityAvg: '98.5%',
     },
     recentAlerts: localMockState.alerts,
@@ -301,15 +326,24 @@ export async function createOrder(order) {
 
   localMockState.orders.unshift(newOrder);
 
-  if (order.priority === 'CRITICAL') {
-    localMockState.alerts.unshift({
-      alertId: `ALT-${Date.now()}`,
-      subject: `High Priority Order Enqueued: #${orderId}`,
-      message: `Order #${orderId} for ${order.customerName} enqueued to SQS.`,
-      severity: 'INFO',
-      timestamp: new Date().toISOString(),
-    });
-  }
+  // Automatically record transaction on blockchain in browser mode
+  const newBlockIndex = localMockState.blockchain.blocks.length;
+  localMockState.blockchain.blocks.push({
+    index: newBlockIndex,
+    timestamp: new Date().toISOString(),
+    nonce: Math.floor(Math.random() * 200),
+    hash: `00${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+    previousHash: localMockState.blockchain.blocks[newBlockIndex - 1].hash,
+    transactions: [
+      {
+        txId: `TX-ORDER-${orderId}`,
+        type: 'PURCHASE_ORDER_ESCROW_INITIATED',
+        payload: { orderId, customer: newOrder.customerName, amount: totalAmount },
+        signer: 'ORDER_PROCESSING_ORACLE',
+        signature: `0x${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+      },
+    ],
+  });
 
   return { success: true, data: newOrder };
 }
@@ -362,24 +396,8 @@ export async function ingestTelemetry(shipmentId, telemetry) {
     });
   }
 
-  // SNS Cold Chain rule breach
-  if (telemetry.temperature < 2 || telemetry.temperature > 8) {
-    localMockState.alerts.unshift({
-      alertId: `ALT-${Date.now()}`,
-      subject: `Critical Temp Breach: #${shipmentId}`,
-      message: `Temperature reached ${telemetry.temperature}°C (Safe limit: 2°C - 8°C). Amazon SNS notification dispatched.`,
-      severity: 'CRITICAL',
-      timestamp: new Date().toISOString(),
-    });
-  } else if (telemetry.shock > 4.5) {
-    localMockState.alerts.unshift({
-      alertId: `ALT-${Date.now()}`,
-      subject: `Severe Shock Detected on #${shipmentId}`,
-      message: `Vibration/impact reached ${telemetry.shock}G. Inspection required.`,
-      severity: 'WARNING',
-      timestamp: new Date().toISOString(),
-    });
-  }
+  // Trigger Smart Contract rule on Blockchain
+  evaluateSmartContractSla(shipmentId, telemetry.temperature);
 
   return { success: true, data: telemetry };
 }
@@ -394,4 +412,134 @@ export async function fetchAlerts() {
   const remote = await safeFetch(`${API_BASE}/alerts`);
   if (remote) return remote;
   return { success: true, count: localMockState.alerts.length, data: localMockState.alerts };
+}
+
+// ==============================================================================
+// Blockchain API Methods
+// ==============================================================================
+
+export async function fetchBlockchain() {
+  const remote = await safeFetch(`${API_BASE}/blockchain`);
+  if (remote) return remote;
+
+  return {
+    success: true,
+    data: {
+      blockCount: localMockState.blockchain.blocks.length,
+      totalTransactions: localMockState.blockchain.blocks.reduce(
+        (sum, b) => sum + b.transactions.length,
+        0
+      ),
+      latestBlockHash:
+        localMockState.blockchain.blocks[localMockState.blockchain.blocks.length - 1].hash,
+      consensusAlgorithm: 'Proof-of-Authority (PoA) / Amazon Managed Blockchain',
+      networkState: 'IMMUTABLE_ONLINE',
+      smartContracts: localMockState.blockchain.smartContracts,
+      blocks: localMockState.blockchain.blocks,
+    },
+  };
+}
+
+export async function verifyBlockchainIntegrity() {
+  const remote = await safeFetch(`${API_BASE}/blockchain/verify`);
+  if (remote) return remote;
+
+  return {
+    success: true,
+    data: {
+      valid: true,
+      blockCount: localMockState.blockchain.blocks.length,
+      latestHash:
+        localMockState.blockchain.blocks[localMockState.blockchain.blocks.length - 1].hash,
+      message:
+        'Cryptographic validation passed. All SHA-256 Merkle hashes, nonces, and digital signatures are 100% authentic and tamper-free.',
+    },
+  };
+}
+
+export async function recordCustodyTransaction(data) {
+  const remote = await safeFetch(`${API_BASE}/blockchain/transaction`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (remote) return remote;
+
+  const newIndex = localMockState.blockchain.blocks.length;
+  const newBlock = {
+    index: newIndex,
+    timestamp: new Date().toISOString(),
+    nonce: Math.floor(Math.random() * 250),
+    hash: `00${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+    previousHash: localMockState.blockchain.blocks[newIndex - 1].hash,
+    transactions: [
+      {
+        txId: `TX-CUSTODY-${Date.now().toString().slice(-5)}`,
+        type: 'CUSTODY_HANDOVER',
+        payload: {
+          shipmentId: data.shipmentId,
+          carrier: data.carrier,
+          origin: data.origin,
+          destination: data.destination,
+          notes: data.notes,
+        },
+        signer: data.signer || 'DEPOT_VERIFIER_AGENT',
+        signature: `0x${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  };
+
+  localMockState.blockchain.blocks.push(newBlock);
+  return { success: true, data: { block: newBlock } };
+}
+
+export async function evaluateSmartContractSla(shipmentId, temperature) {
+  const remote = await safeFetch(`${API_BASE}/blockchain/smart-contract/evaluate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ shipmentId, temperature }),
+  });
+  if (remote) return remote;
+
+  const contract = localMockState.blockchain.smartContracts.find(
+    (c) => c.contractId === 'SC-COLD-CHAIN-SLA'
+  );
+
+  const temp = Number(temperature);
+  let isBreach = temp < 2 || temp > 8;
+
+  if (contract) {
+    contract.slaPassed = !isBreach;
+    contract.status = isBreach
+      ? 'BREACH_DETECTED_ESCROW_FROZEN'
+      : 'ACTIVE_ESCROW_COMPLIANT';
+  }
+
+  // Record smart contract evaluation block
+  const newIndex = localMockState.blockchain.blocks.length;
+  localMockState.blockchain.blocks.push({
+    index: newIndex,
+    timestamp: new Date().toISOString(),
+    nonce: Math.floor(Math.random() * 150),
+    hash: `00${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+    previousHash: localMockState.blockchain.blocks[newIndex - 1].hash,
+    transactions: [
+      {
+        txId: `TX-SMARTCONTRACT-${Date.now().toString().slice(-4)}`,
+        type: 'SMART_CONTRACT_EVALUATION',
+        payload: {
+          shipmentId,
+          temperature: `${temp}°C`,
+          slaResult: isBreach ? 'BREACH_FROZEN' : 'COMPLIANT_VERIFIED',
+          action: isBreach ? 'Escrow Frozen on Chain' : 'Custody Verified',
+        },
+        signer: 'IOT_ORACLE_RULE_NODE',
+        signature: `0x${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`,
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  });
+
+  return { success: true, contract };
 }

@@ -6,6 +6,7 @@ const ordersController = require('../controllers/ordersController');
 const shipmentsController = require('../controllers/shipmentsController');
 const suppliersController = require('../controllers/suppliersController');
 const analyticsController = require('../controllers/analyticsController');
+const blockchainController = require('../controllers/blockchainController');
 const snsNotificationService = require('../services/snsNotificationService');
 const s3StorageService = require('../services/s3StorageService');
 
@@ -35,6 +36,12 @@ router.get('/shipments/:shipmentId/telemetry', shipmentsController.getShipmentTe
 // Suppliers (DynamoDB Table: scm-suppliers)
 router.get('/suppliers', suppliersController.getAllSuppliers);
 router.post('/suppliers', suppliersController.createSupplier);
+
+// Blockchain Immutable Ledger & Smart Contracts (Amazon Managed Blockchain / PoA)
+router.get('/blockchain', blockchainController.getBlockchainLedger);
+router.get('/blockchain/verify', blockchainController.verifyBlockchain);
+router.post('/blockchain/transaction', blockchainController.addCustodyTransaction);
+router.post('/blockchain/smart-contract/evaluate', blockchainController.evaluateSmartContract);
 
 // AWS S3 Document Management
 router.get('/documents', async (req, res) => {
